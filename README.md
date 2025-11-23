@@ -61,7 +61,7 @@ Professional menu-driven interface combining all modules in one tool.
 
 ```bash
 # Navigate to project directory
-cd recon_suite
+cd phantom
 
 # Run setup script
 chmod +x setup.sh
