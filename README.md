@@ -1,0 +1,204 @@
+# PHANTOM
+
+### Invisible Network Reconnaissance Framework
+
+A professional cybersecurity toolkit for stealth reconnaissance and authorized penetration testing operations.
+
+## Legal Notice
+
+**CRITICAL: This tool is for educational and authorized testing purposes only.**
+
+Only use on:
+
+- Your own systems
+- Systems with explicit written authorization
+- Authorized penetration testing engagements
+- Educational lab environments (HTB, THM, etc.)
+
+Unauthorized use is illegal and may result in criminal prosecution.
+
+## Features
+
+### Unified Multi-Tool Interface
+
+Professional menu-driven interface combining all modules in one tool.
+
+### Four Core Modules
+
+**1. Port Scanner**
+
+- Multi-threaded TCP scanning
+- Banner grabbing
+- Service identification
+- Customizable port ranges
+
+**2. Service Fingerprinting**
+
+- Service version detection
+- Banner analysis
+- HTTP probing
+- Common service signatures
+
+**3. Subdomain Enumeration**
+
+- DNS brute force with built-in wordlist
+- Zone transfer testing
+- Concurrent DNS lookups
+- A/CNAME record discovery
+
+**4. Web Crawler**
+
+- HTTP spider with depth control
+- Form discovery
+- Email extraction
+- Robots.txt parsing
+- Sitemap detection
+- External link enumeration
+
+## Installation
+
+### On ParrotOS or Kali Linux
+
+```bash
+# Navigate to project directory
+cd recon_suite
+
+# Run setup script
+chmod +x setup.sh
+./setup.sh
+```
+
+### Manual Installation
+
+```bash
+# Install dependencies
+pip3 install -r requirements.txt
+
+# Make scripts executable
+chmod +x *.py
+```
+
+## Usage
+
+### Multi-Tool Interface (Recommended)
+
+```bash
+python3 recon_suite.py
+```
+
+This launches the interactive menu where you can:
+
+- Select individual modules
+- Run full reconnaissance
+  recon_suite/
+  ├── recon_suite.py # Main multi-tool interface
+  ├── setup.sh # Installation script
+  ├── requirements.txt # Python dependencies
+  ├── README.md # This file
+  ├── LEARNING.md # Educational guide
+  ├── VERIFICATION.md # Testing documentation
+  ├── .gitignore # Git exclusions
+  └── modules/ # Tool modules
+  ├── **init**.py # Package initialization
+  ├── port_scanner.py # Port scanning module
+  ├── service_fingerprint.py # Service fingerprinting
+  ├── subdomain_enum.py # Subdomain enumeration
+  └── web_crawler.py # Web crawling module
+
+````
+
+## Educational Resources
+
+See [LEARNING.md](LEARNING.md) for detailed explanations of:
+
+- How port scanning works
+- TCP/IP fundamentals
+- Socket programming
+- Multi-threading concepts
+- DNS enumeration techniques
+- Web reconnaissance methods
+
+## Output
+
+Results can be saved in JSON format for further analysis:
+
+```json
+{
+  "target": "example.com",
+  "timestamp": "2025-11-23T22:30:00",
+  "scans": {
+    "port_scan": [...],
+    "fingerprinting": [...],
+    "subdomains": {...},
+    "web_crawl": {...}
+  }
+}
+````
+
+## Requirements
+
+- Python 3.7+
+- Linux environment (ParrotOS, Kali, Ubuntu)
+- Network connectivity
+- Proper authorization for target systems
+
+## Security Considerations
+
+**Attack Surface Awareness**
+
+- Every open port is a potential entry point
+- Service versions may have known vulnerabilities
+- Subdomain discovery reveals hidden infrastructure
+- Web forms are common attack vectors
+
+**Defensive Use**
+
+- Audit your own infrastructure
+- Identify unnecessary exposed services
+- Monitor for reconnaissance attempts
+- Keep services updated
+
+## Troubleshooting
+
+**DNS errors in subdomain enumeration**
+
+```bash
+# Install/update dnspython
+pip3 install --upgrade dnspython
+```
+
+**Permission errors**
+
+```bash
+# Make sure scripts are executable
+chmod +x *.py
+```
+
+**Import errors**
+
+```bash
+# Ensure all dependencies are installed
+pip3 install -r requirements.txt
+```
+
+## Contributing
+
+This is an educational project. Feel free to:
+
+- Add new modules
+- Improve existing features
+- Enhance documentation
+- Report bugs
+
+## License
+
+Educational and authorized testing purposes only.
+
+## Author
+
+**Katyusha47**  
+Version 1.0.0 - STEALTH EDITION
+
+---
+
+**Remember: With great power comes great responsibility. Only test systems you have permission to scan.**

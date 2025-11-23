@@ -1,0 +1,16 @@
+# Network Reconnaissance Suite - Dependencies
+
+# DNS operations (subdomain enumeration)
+dnspython>=2.4.0
+
+# HTTP operations (web crawler)
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+
+# Standard library modules used:
+# - socket (TCP/IP networking)
+# - argparse (command-line parsing)
+# - concurrent.futures (threading)
+# - json (data serialization)
+# - re (regex for pattern matching)
+# - datetime (timestamps)
