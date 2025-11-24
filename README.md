@@ -23,7 +23,7 @@ Unauthorized use is illegal and may result in criminal prosecution.
 
 Professional menu-driven interface combining all modules in one tool.
 
-### Four Core Modules
+### Six Core Modules
 
 **1. Port Scanner**
 
@@ -55,6 +55,22 @@ Professional menu-driven interface combining all modules in one tool.
 - Sitemap detection
 - External link enumeration
 
+**5. Username Enumeration (OSINT)**
+
+- Check username across 50+ platforms
+- Social media presence mapping
+- Developer platform checks
+- Gaming and creative platform detection
+- Automated profile discovery
+
+**6. Domain Intelligence (OSINT)**
+
+- WHOIS lookup and registration data
+- DNS record enumeration
+- IP geolocation
+- Web technology detection
+- Contact information extraction
+
 ## Installation
 
 ### On ParrotOS or Kali Linux
@@ -70,49 +86,10 @@ chmod +x setup.sh
 
 ### Manual Installation
 
-```bash
+````bash
 # Install dependencies
 pip3 install -r requirements.txt
 
-# Make scripts executable
-chmod +x *.py
-```
-
-## Usage
-
-### Multi-Tool Interface (Recommended)
-
-```bash
-python3 recon_suite.py
-```
-
-This launches the interactive menu where you can:
-
-- Select individual modules
-- Run full reconnaissance
-  recon_suite/
-  ├── recon_suite.py # Main multi-tool interface
-  ├── setup.sh # Installation script
-  ├── requirements.txt # Python dependencies
-  ├── README.md # This file
-  ├── LEARNING.md # Educational guide
-  ├── VERIFICATION.md # Testing documentation
-  ├── .gitignore # Git exclusions
-  └── modules/ # Tool modules
-  ├── **init**.py # Package initialization
-  ├── port_scanner.py # Port scanning module
-  ├── service_fingerprint.py # Service fingerprinting
-  ├── subdomain_enum.py # Subdomain enumeration
-  └── web_crawler.py # Web crawling module
-
-````
-
-## Educational Resources
-
-See [LEARNING.md](LEARNING.md) for detailed explanations of:
-
-- How port scanning works
-- TCP/IP fundamentals
 - Socket programming
 - Multi-threading concepts
 - DNS enumeration techniques
@@ -197,7 +174,7 @@ Educational and authorized testing purposes only.
 ## Author
 
 **Katyusha47**  
-Version 1.0.0 - STEALTH EDITION
+Version 1.0.0
 
 ---
 
