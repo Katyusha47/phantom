@@ -31,23 +31,35 @@ class DomainIntel:
         Returns:
             WHOIS information
         """
+        def safe_extract(value):
+            """Safely extract value from whois data"""
+            if value is None:
+                return None
+            # Handle lists (whois sometimes returns lists)
+            if isinstance(value, list):
+                if len(value) > 0:
+                    return str(value[0])
+                return None
+            # Convert to string
+            return str(value)
+        
         try:
             import whois
             
             w = whois.whois(self.domain)
             
-            # Extract relevant info
+            # Extract relevant info with safe extraction
             info = {
                 'domain': self.domain,
-                'registrar': w.registrar if hasattr(w, 'registrar') else None,
-                'creation_date': str(w.creation_date) if hasattr(w, 'creation_date') else None,
-                'expiration_date': str(w.expiration_date) if hasattr(w, 'expiration_date') else None,
-                'updated_date': str(w.updated_date) if hasattr(w, 'updated_date') else None,
-                'name_servers': w.name_servers if hasattr(w, 'name_servers') else [],
-                'status': w.status if hasattr(w, 'status') else None,
-                'emails': w.emails if hasattr(w, 'emails') else [],
-                'org': w.org if hasattr(w, 'org') else None,
-                'country': w.country if hasattr(w, 'country') else None,
+                'registrar': safe_extract(getattr(w, 'registrar', None)),
+                'creation_date': safe_extract(getattr(w, 'creation_date', None)),
+                'expiration_date': safe_extract(getattr(w, 'expiration_date', None)),
+                'updated_date': safe_extract(getattr(w, 'updated_date', None)),
+                'name_servers': getattr(w, 'name_servers', []) or [],
+                'status': safe_extract(getattr(w, 'status', None)),
+                'emails': getattr(w, 'emails', []) or [],
+                'org': safe_extract(getattr(w, 'org', None)),
+                'country': safe_extract(getattr(w, 'country', None)),
             }
             
             return info
