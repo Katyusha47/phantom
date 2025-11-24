@@ -89,7 +89,7 @@ chmod +x setup.sh
 ````bash
 # Install dependencies
 pip3 install -r requirements.txt
-
+````
 - Socket programming
 - Multi-threading concepts
 - DNS enumeration techniques
