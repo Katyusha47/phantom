@@ -3,9 +3,12 @@
 # DNS operations (subdomain enumeration)
 dnspython>=2.4.0
 
-# HTTP operations (web crawler)
+# HTTP operations (web crawler, username enum)
 requests>=2.31.0
 beautifulsoup4>=4.12.0
+
+# WHOIS lookup (domain intelligence)
+python-whois>=0.8.0
 
 # Standard library modules used:
 # - socket (TCP/IP networking)

@@ -20,6 +20,8 @@ from modules.port_scanner import scan_target, resolve_target, parse_ports
 from modules.service_fingerprint import fingerprint_target
 from modules.subdomain_enum import enumerate_subdomains
 from modules.web_crawler import crawl_website
+from modules.username_enum import check_username
+from modules.domain_intel import domain_intelligence
 
 class Colors:
     """ANSI color codes for terminal output - Cyberpunk theme"""
@@ -60,7 +62,7 @@ def print_banner():
 {Colors.ENDC}
 {Colors.GRAY}┌────────────────────────────────────────────────────────────────┐{Colors.ENDC}
 {Colors.PURPLE}│ AUTHOR  {Colors.GRAY}│{Colors.ENDC} {Colors.WHITE}Katyusha47{Colors.ENDC}
-{Colors.PURPLE}│ VERSION {Colors.GRAY}│{Colors.ENDC} {Colors.NEON}1.0.0 [STEALTH EDITION]{Colors.ENDC}
+{Colors.PURPLE}│ VERSION {Colors.GRAY}│{Colors.ENDC} {Colors.NEON}1.0.0{Colors.ENDC}
 {Colors.PURPLE}│ PURPOSE {Colors.GRAY}│{Colors.ENDC} {Colors.CYAN}Authorized Security Operations Only{Colors.ENDC}
 {Colors.GRAY}└────────────────────────────────────────────────────────────────┘{Colors.ENDC}
 
@@ -81,7 +83,9 @@ def print_menu():
         ("SERVICE FINGERPRINT", "Identify services and versions", Colors.CYAN),
         ("SUBDOMAIN ENUMERATION", "Discover subdomains", Colors.CYAN),
         ("WEB CRAWLER", "Spider websites for intelligence", Colors.CYAN),
-        ("FULL RECONNAISSANCE", "Run all modules sequentially", Colors.PURPLE),
+        ("USERNAME ENUMERATION", "Check username across platforms (OSINT)", Colors.PURPLE),
+        ("DOMAIN INTELLIGENCE", "WHOIS and domain reconnaissance (OSINT)", Colors.PURPLE),
+        ("FULL RECONNAISSANCE", "Run all modules sequentially", Colors.NEON),
         ("SETTINGS", "Configure scan parameters", Colors.GRAY),
         ("EXIT", "Exit the program", Colors.RED),
     ]
@@ -318,6 +322,128 @@ def module_web_crawler():
     input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
 
 
+def module_username_enum():
+    """Username enumeration OSINT module"""
+    clear_screen()
+    print(f"\n{Colors.PURPLE}{'═'*68}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.PURPLE}◈ USERNAME ENUMERATION MODULE [OSINT]{Colors.ENDC}")
+    print(f"{Colors.PURPLE}{'═'*68}{Colors.ENDC}\n")
+    
+    username = get_user_input("Username to check", str)
+    if not username:
+        return
+    
+    print(f"\n{Colors.YELLOW}[INFO]{Colors.ENDC} Checking username '{username}' across 50+ platforms...")
+    print(f"{Colors.YELLOW}[INFO]{Colors.ENDC} This may take a moment...")
+    print(f"{Colors.CYAN}{'='*60}{Colors.ENDC}\n")
+    
+    # Run check
+    results = check_username(username)
+    
+    # Display results
+    print(f"{Colors.GREEN}[COMPLETE]{Colors.ENDC} Scan finished\n")
+    print(f"  Total platforms checked: {results['total_checked']}")
+    print(f"  {Colors.GREEN}Found: {len(results['found'])}{Colors.ENDC}")
+    print(f"  {Colors.RED}Not found: {len(results['not_found'])}{Colors.ENDC}")
+    print(f"  {Colors.GRAY}Unknown/Error: {len(results['unknown'])}{Colors.ENDC}")
+    
+    # Show found profiles
+    if results['found']:
+        print(f"\n{Colors.PURPLE}═══ FOUND PROFILES ═══{Colors.ENDC}\n")
+        for item in results['found']:
+            print(f"{Colors.GREEN}[✓]{Colors.ENDC} {Colors.CYAN}{item['platform']:<20}{Colors.ENDC} {Colors.GRAY}{item['url']}{Colors.ENDC}")
+    
+    # Show sample of not found (first 10)
+    if results['not_found']:
+        print(f"\n{Colors.GRAY}═══ NOT FOUND (sample) ═══{Colors.ENDC}\n")
+        for item in results['not_found'][:10]:
+            print(f"{Colors.RED}[✗]{Colors.ENDC} {Colors.GRAY}{item['platform']}{Colors.ENDC}")
+    
+    # Ask to save
+    if get_user_input("\nSave results to file? (y/n)", bool, False):
+        save_results(results)
+    
+    input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
+
+
+def module_domain_intel():
+    """Domain intelligence OSINT module"""
+    clear_screen()
+    print(f"\n{Colors.PURPLE}{'═'*68}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.PURPLE}◈ DOMAIN INTELLIGENCE MODULE [OSINT]{Colors.ENDC}")
+    print(f"{Colors.PURPLE}{'═'*68}{Colors.ENDC}\n")
+    
+    domain = get_user_input("Domain to investigate (e.g., example.com)", str)
+    if not domain:
+        return
+    
+    print(f"\n{Colors.YELLOW}[INFO]{Colors.ENDC} Gathering intelligence on '{domain}'...")
+    print(f"{Colors.CYAN}{'='*60}{Colors.ENDC}\n")
+    
+    # Run intelligence gathering
+    results = domain_intelligence(domain)
+    
+    # Display WHOIS info
+    print(f"{Colors.PURPLE}═══ WHOIS INFORMATION ═══{Colors.ENDC}\n")
+    if 'error' not in results['whois']:
+        whois = results['whois']
+        if whois.get('registrar'):
+            print(f"{Colors.CYAN}Registrar:{Colors.ENDC} {whois['registrar']}")
+        if whois.get('creation_date'):
+            print(f"{Colors.CYAN}Created:{Colors.ENDC} {whois['creation_date']}")
+        if whois.get('expiration_date'):
+            print(f"{Colors.CYAN}Expires:{Colors.ENDC} {whois['expiration_date']}")
+        if whois.get('org'):
+            print(f"{Colors.CYAN}Organization:{Colors.ENDC} {whois['org']}")
+        if whois.get('country'):
+            print(f"{Colors.CYAN}Country:{Colors.ENDC} {whois['country']}")
+        if whois.get('emails'):
+            emails = whois['emails'] if isinstance(whois['emails'], list) else [whois['emails']]
+            print(f"{Colors.CYAN}Contact Emails:{Colors.ENDC} {', '.join(emails)}")
+    else:
+        print(f"{Colors.YELLOW}{results['whois']['error']}{Colors.ENDC}")
+    
+    # Display IP info
+    print(f"\n{Colors.PURPLE}═══ IP & LOCATION ═══{Colors.ENDC}\n")
+    if 'error' not in results['ip_info']:
+        ip_info = results['ip_info']
+        print(f"{Colors.CYAN}IP Address:{Colors.ENDC} {ip_info.get('ip', 'N/A')}")
+        if ip_info.get('country'):
+            print(f"{Colors.CYAN}Country:{Colors.ENDC} {ip_info['country']}")
+        if ip_info.get('city'):
+            print(f"{Colors.CYAN}City:{Colors.ENDC} {ip_info['city']}")
+        if ip_info.get('isp'):
+            print(f"{Colors.CYAN}ISP:{Colors.ENDC} {ip_info['isp']}")
+    else:
+        print(f"{Colors.YELLOW}{results['ip_info']['error']}{Colors.ENDC}")
+    
+    # Display DNS records
+    print(f"\n{Colors.PURPLE}═══ DNS RECORDS ═══{Colors.ENDC}\n")
+    dns = results['dns']
+    if dns.get('A'):
+        print(f"{Colors.CYAN}A Records:{Colors.ENDC} {', '.join(dns['A'])}")
+    if dns.get('MX'):
+        print(f"{Colors.CYAN}MX Records:{Colors.ENDC} {', '.join(dns['MX'])}")
+    if dns.get('NS'):
+        print(f"{Colors.CYAN}Nameservers:{Colors.ENDC} {', '.join(dns['NS'])}")
+    
+    # Display web technologies
+    print(f"\n{Colors.PURPLE}═══ WEB TECHNOLOGIES ═══{Colors.ENDC}\n")
+    if 'error' not in results['web_tech']:
+        tech = results['web_tech']
+        print(f"{Colors.CYAN}Server:{Colors.ENDC} {tech.get('server', 'Unknown')}")
+        if tech.get('technologies'):
+            print(f"{Colors.CYAN}Technologies:{Colors.ENDC} {', '.join(tech['technologies'])}")
+    else:
+        print(f"{Colors.YELLOW}{results['web_tech']['error']}{Colors.ENDC}")
+    
+    # Ask to save
+    if get_user_input("\nSave results to file? (y/n)", bool, False):
+        save_results(results)
+    
+    input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
+
+
 def module_full_recon():
     """Run all reconnaissance modules"""
     clear_screen()
@@ -406,11 +532,15 @@ def main():
         elif choice == '4':
             module_web_crawler()
         elif choice == '5':
-            module_full_recon()
+            module_username_enum()
         elif choice == '6':
+            module_domain_intel()
+        elif choice == '7':
+            module_full_recon()
+        elif choice == '8':
             print(f"{Colors.YELLOW}[INFO]{Colors.ENDC} Settings module coming soon...")
             input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
-        elif choice == '7' or choice.lower() in ['exit', 'quit', 'q']:
+        elif choice == '9' or choice.lower() in ['exit', 'quit', 'q']:
             print(f"\n{Colors.PURPLE}{'═'*68}{Colors.ENDC}")
             print(f"{Colors.CYAN}[◈]{Colors.ENDC} {Colors.PURPLE}PHANTOM shutting down...{Colors.ENDC}")
             print(f"{Colors.GRAY}Remember: Stay invisible. Only test authorized systems.{Colors.ENDC}")
