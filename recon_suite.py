@@ -256,16 +256,28 @@ def module_subdomain_enum():
     if results['zone_transfer']:
         print(f"{Colors.YELLOW}[ZONE TRANSFER]{Colors.ENDC} Successful! Found {len(results['zone_transfer'])} records")
     
+    if results['cert_transparency']:
+        print(f"{Colors.PURPLE}[CERT TRANSPARENCY]{Colors.ENDC} Found {len(results['cert_transparency'])} from SSL certificates")
+    
     if results['brute_force']:
         print(f"\n{Colors.CYAN}Discovered Subdomains:{Colors.ENDC}")
-        for item in results['brute_force'][:20]:  # Show first 20
-            if 'ips' in item:
-                print(f"  {Colors.GREEN}[+]{Colors.ENDC} {item['subdomain']} -> {', '.join(item['ips'])}")
-            elif 'cnames' in item:
-                print(f"  {Colors.GREEN}[+]{Colors.ENDC} {item['subdomain']} -> CNAME: {', '.join(item['cnames'])}")
         
-        if len(results['brute_force']) > 20:
-            print(f"  ... and {len(results['brute_force']) - 20} more")
+        # Combine all sources for display
+        all_subs = []
+        all_subs.extend(results['brute_force'])
+        all_subs.extend(results.get('cert_transparency', []))
+        
+        for item in all_subs[:20]:  # Show first 20
+            source_tag = f"[CT]" if item.get('source') == 'cert_transparency' else ""
+            if 'ips' in item:
+                print(f"  {Colors.GREEN}[+]{Colors.ENDC} {source_tag} {item['subdomain']} -> {', '.join(item['ips'])}")
+            elif 'cnames' in item:
+                print(f"  {Colors.GREEN}[+]{Colors.ENDC} {source_tag} {item['subdomain']} -> CNAME: {', '.join(item['cnames'])}")
+            elif item.get('status') == 'not_resolving':
+                print(f"  {Colors.GRAY}[+]{Colors.ENDC} {source_tag} {item['subdomain']} (not resolving)")
+        
+        if len(all_subs) > 20:
+            print(f"  ... and {len(all_subs) - 20} more")
     
     # Ask to save
     if results['total_found'] > 0 and get_user_input("\nSave results to file? (y/n)", bool, False):

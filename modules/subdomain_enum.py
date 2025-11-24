@@ -8,6 +8,8 @@ import socket
 import dns.resolver
 import dns.zone
 import dns.query
+import requests
+import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import List, Dict, Set
 
@@ -151,12 +153,76 @@ class SubdomainEnumerator:
         
         return results
     
-    def enumerate(self, check_zone_transfer: bool = True) -> Dict[str, any]:
+    def cert_transparency(self) -> List[Dict]:
+        """
+        Search Certificate Transparency logs for subdomains
+        Uses crt.sh API to find SSL certificates issued for the domain
+        
+        This discovers subdomains beyond the wordlist by checking
+        public SSL certificate databases.
+        
+        Returns:
+            List of subdomains found in CT logs
+        """
+        results = []
+        found = set()
+        
+        try:
+            # Query crt.sh API
+            url = f"https://crt.sh/?q=%.{self.domain}&output=json"
+            response = requests.get(url, timeout=30)
+            
+            if response.status_code == 200:
+                certs = response.json()
+                
+                for cert in certs:
+                    # Extract common name and name values
+                    name_value = cert.get('name_value', '')
+                    
+                    # Split by newlines (multiple domains in one cert)
+                    domains = name_value.split('\n')
+                    
+                    for domain in domains:
+                        domain = domain.strip().lower()
+                        
+                        # Remove wildcard prefix
+                        domain = domain.replace('*.', '')
+                        
+                        # Only include subdomains of our target
+                        if domain.endswith(self.domain) and domain not in found:
+                            found.add(domain)
+                            
+                            # Try to resolve it to verify it's active
+                            try:
+                                answers = dns.resolver.resolve(domain, 'A', lifetime=2)
+                                ips = [str(rdata) for rdata in answers]
+                                
+                                results.append({
+                                    'subdomain': domain,
+                                    'ips': ips,
+                                    'source': 'cert_transparency'
+                                })
+                                self.found_subdomains.add(domain)
+                            except:
+                                # Still add it even if not currently resolving
+                                results.append({
+                                    'subdomain': domain,
+                                    'source': 'cert_transparency',
+                                    'status': 'not_resolving'
+                                })
+        
+        except Exception as e:
+            pass
+        
+        return results
+    
+    def enumerate(self, check_zone_transfer: bool = True, check_ct_logs: bool = True) -> Dict[str, any]:
         """
         Run complete subdomain enumeration
         
         Args:
             check_zone_transfer: Whether to attempt zone transfer
+            check_ct_logs: Whether to check Certificate Transparency logs
             
         Returns:
             Complete enumeration results
@@ -165,6 +231,7 @@ class SubdomainEnumerator:
             'domain': self.domain,
             'zone_transfer': [],
             'brute_force': [],
+            'cert_transparency': [],
             'total_found': 0
         }
         
@@ -174,6 +241,13 @@ class SubdomainEnumerator:
             if zt_results:
                 results['zone_transfer'] = zt_results
                 results['total_found'] += len(zt_results)
+        
+        # Certificate Transparency lookup (finds subdomains beyond wordlist)
+        if check_ct_logs:
+            ct_results = self.cert_transparency()
+            if ct_results:
+                results['cert_transparency'] = ct_results
+                results['total_found'] += len(ct_results)
         
         # Brute force enumeration
         bf_results = self.brute_force()
