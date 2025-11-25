@@ -134,17 +134,21 @@ def get_user_input(prompt, input_type=str, default=None):
             return None
 
 
-def save_results(results, filename=None):
+def save_results(results, filename=None, module_name=None):
     """
     Save results to JSON file
     
     Args:
         results: Results dictionary
         filename: Output filename (auto-generated if None)
+        module_name: Name of module for auto-generated filename
     """
     if not filename:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"recon_results_{timestamp}.json"
+        if module_name:
+            filename = f"{module_name}_{timestamp}.json"
+        else:
+            filename = f"recon_results_{timestamp}.json"
     
     try:
         with open(filename, 'w') as f:
@@ -184,7 +188,7 @@ def module_port_scanner():
     
     # Ask to save
     if results and get_user_input("Save results to file? (y/n)", bool, False):
-        save_results({'scan_type': 'port_scan', 'target': target, 'results': results})
+        save_results({'scan_type': 'port_scan', 'target': target, 'results': results}, module_name='port_scan')
     
     input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
 
@@ -225,7 +229,7 @@ def module_service_fingerprint():
     
     # Ask to save
     if results and get_user_input("Save results to file? (y/n)", bool, False):
-        save_results({'scan_type': 'service_fingerprint', 'target': target, 'results': results})
+        save_results({'scan_type': 'service_fingerprint', 'target': target, 'results': results}, module_name='service_fingerprint')
     
     input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
 
@@ -281,7 +285,7 @@ def module_subdomain_enum():
     
     # Ask to save
     if results['total_found'] > 0 and get_user_input("\nSave results to file? (y/n)", bool, False):
-        save_results(results)
+        save_results(results, module_name='subdomain_enum')
     
     input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
 
@@ -329,7 +333,7 @@ def module_web_crawler():
     
     # Ask to save
     if get_user_input("\nSave results to file? (y/n)", bool, False):
-        save_results(results)
+        save_results(results, module_name='web_crawler')
     
     input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
 
@@ -373,7 +377,7 @@ def module_username_enum():
     
     # Ask to save
     if get_user_input("\nSave results to file? (y/n)", bool, False):
-        save_results(results)
+        save_results(results, module_name='username_enum')
     
     input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
 
@@ -451,7 +455,7 @@ def module_domain_intel():
     
     # Ask to save
     if get_user_input("\nSave results to file? (y/n)", bool, False):
-        save_results(results)
+        save_results(results, module_name='domain_intel')
     
     input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
 
