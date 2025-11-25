@@ -22,6 +22,7 @@ from modules.subdomain_enum import enumerate_subdomains
 from modules.web_crawler import crawl_website
 from modules.username_enum import check_username
 from modules.domain_intel import domain_intelligence
+from modules.stress_tester import stress_test
 
 class Colors:
     """ANSI color codes for terminal output - Cyberpunk theme"""
@@ -90,9 +91,10 @@ def print_menu():
         ("4", "WEB CRAWLER", "Spider websites", Colors.CYAN),
         ("5", "USERNAME ENUMERATION", "OSINT: Check usernames", Colors.PURPLE),
         ("6", "DOMAIN INTELLIGENCE", "OSINT: WHOIS & DNS", Colors.PURPLE),
-        ("7", "FULL RECONNAISSANCE", "Run all modules", Colors.NEON),
-        ("8", "SETTINGS", "Configure parameters", Colors.GRAY),
-        ("9", "EXIT", "Exit program", Colors.RED),
+        ("7", "DDOS ATTACK", "Flood & exhaust server", Colors.RED),
+        ("8", "FULL RECONNAISSANCE", "Run recon modules", Colors.NEON),
+        ("9", "SETTINGS", "Configure parameters", Colors.GRAY),
+        ("0", "EXIT", "Exit program", Colors.RED),
     ]
     
     for idx, name, desc, color in menu_items:
@@ -462,6 +464,103 @@ def module_domain_intel():
     input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
 
 
+def module_ddos_attack():
+    """DDoS attack simulation module interface"""
+    clear_screen()
+    print(f"\n{Colors.RED}{'═'*68}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.RED}◈◈◈ {Colors.YELLOW}DDoS ATTACK SIMULATOR{Colors.RED} ◈◈◈{Colors.ENDC}")
+    print(f"{Colors.RED}{'═'*68}{Colors.ENDC}\n")
+    
+    # CRITICAL WARNING
+    print(f"{Colors.RED}{Colors.BOLD}⚠  CRITICAL WARNING ⚠{Colors.ENDC}")
+    print(f"{Colors.YELLOW}This module can take down servers and networks!{Colors.ENDC}")
+    print(f"{Colors.YELLOW}Only use on YOUR OWN infrastructure with authorization.{Colors.ENDC}\n")
+    
+    confirm = input(f"{Colors.RED}[!]{Colors.ENDC} Do you have EXPLICIT authorization to test this server? (type 'YES'): ")
+    
+    if confirm != 'YES':
+        print(f"{Colors.YELLOW}[ABORT]{Colors.ENDC} Test cancelled. Authorization required.")
+        input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
+        return
+    
+    target = get_user_input("Target IP/Hostname", str)
+    if not target:
+        return
+    
+    port = get_user_input("Target Port", int, 80)
+    
+    print(f"\n{Colors.CYAN}═══ TEST METHODS ═══{Colors.ENDC}")
+    print(f"{Colors.CYAN}1.{Colors.ENDC} HTTP Flood - Overwhelm with HTTP requests")
+    print(f"{Colors.CYAN}2.{Colors.ENDC} Slowloris - Exhaust connection pool")
+    print(f"{Colors.CYAN}3.{Colors.ENDC} Combined - Both attacks simultaneously")
+    
+    method_choice = get_user_input("\nSelect method (1-3)", str, "1")
+    
+    if method_choice == '1':
+        threads = get_user_input("Number of threads", int, 100)
+        duration = get_user_input("Duration (seconds)", int, 60)
+        
+        print(f"\n{Colors.YELLOW}[INFO]{Colors.ENDC} Starting HTTP Flood...")
+        print(f"{Colors.YELLOW}[INFO]{Colors.ENDC} Target: {target}:{port}")
+        print(f"{Colors.YELLOW}[INFO]{Colors.ENDC} Threads: {threads}, Duration: {duration}s")
+        print(f"{Colors.CYAN}{'='*60}{Colors.ENDC}\n")
+        
+        results = stress_test(target, port, method='http_flood', threads=threads, duration=duration)
+    
+    elif method_choice == '2':
+        sockets = get_user_input("Number of sockets", int, 200)
+        duration = get_user_input("Duration (seconds)", int, 300)
+        
+        print(f"\n{Colors.YELLOW}[INFO]{Colors.ENDC} Starting Slowloris...")
+        print(f"{Colors.YELLOW}[INFO]{Colors.ENDC} Target: {target}:{port}")
+        print(f"{Colors.YELLOW}[INFO]{Colors.ENDC} Sockets: {sockets}, Duration: {duration}s")
+        print(f"{Colors.CYAN}{'='*60}{Colors.ENDC}\n")
+        
+        results = stress_test(target, port, method='slowloris', sockets=sockets, duration=duration)
+    
+    elif method_choice == '3':
+        http_threads = get_user_input("HTTP threads", int, 50)
+        slowloris_sockets = get_user_input("Slowloris sockets", int, 100)
+        duration = get_user_input("Duration (seconds)", int, 120)
+        
+        print(f"\n{Colors.YELLOW}[INFO]{Colors.ENDC} Starting Combined Attack...")
+        print(f"{Colors.YELLOW}[INFO]{Colors.ENDC} Target: {target}:{port}")
+        print(f"{Colors.CYAN}{'='*60}{Colors.ENDC}\n")
+        
+        results = stress_test(target, port, method='combined', 
+                            http_threads=http_threads, 
+                            slowloris_sockets=slowloris_sockets, 
+                            duration=duration)
+    else:
+        print(f"{Colors.RED}[ERROR]{Colors.ENDC} Invalid method selected")
+        input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
+        return
+    
+    # Display results
+    print(f"\n{Colors.GREEN}{'='*60}{Colors.ENDC}")
+    print(f"{Colors.GREEN}[COMPLETE]{Colors.ENDC} Stress test finished\n")
+    print(f"  Target: {results['target']}")
+    print(f"  Duration: {results['duration']:.2f}s")
+    print(f"  Requests sent: {results['requests_sent']}")
+    print(f"  Requests failed: {results['requests_failed']}")
+    print(f"  Success rate: {results['success_rate']:.2f}%")
+    print(f"  Requests/sec: {results['requests_per_second']:.2f}")
+    
+    if results.get('connections_opened'):
+        print(f"  Connections opened: {results['connections_opened']}")
+    
+    if results.get('errors'):
+        print(f"\n{Colors.YELLOW}Top Errors:{Colors.ENDC}")
+        for err in results['errors'][:5]:
+            print(f"  - {err}")
+    
+    # Ask to save
+    if get_user_input("\nSave results to file? (y/n)", bool, False):
+        save_results(results, module_name='ddos_attack')
+    
+    input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
+
+
 def module_full_recon():
     """Run all reconnaissance modules"""
     clear_screen()
@@ -554,11 +653,13 @@ def main():
         elif choice == '6':
             module_domain_intel()
         elif choice == '7':
-            module_full_recon()
+            module_ddos_attack()
         elif choice == '8':
+            module_full_recon()
+        elif choice == '9':
             print(f"{Colors.YELLOW}[INFO]{Colors.ENDC} Settings module coming soon...")
             input(f"\n{Colors.YELLOW}Press Enter to continue...{Colors.ENDC}")
-        elif choice == '9' or choice.lower() in ['exit', 'quit', 'q']:
+        elif choice == '0' or choice.lower() in ['exit', 'quit', 'q']:
             print(f"\n{Colors.PURPLE}{'═'*68}{Colors.ENDC}")
             print(f"{Colors.CYAN}[◈]{Colors.ENDC} {Colors.PURPLE}PHANTOM shutting down...{Colors.ENDC}")
             print(f"{Colors.GRAY}Remember: Stay invisible. Only test authorized systems.{Colors.ENDC}")

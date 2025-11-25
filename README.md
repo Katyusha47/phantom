@@ -23,7 +23,7 @@ Unauthorized use is illegal and may result in criminal prosecution.
 
 Professional menu-driven interface combining all modules in one tool.
 
-### Six Core Modules
+### Seven Core Modules
 
 **1. Port Scanner**
 
@@ -43,8 +43,8 @@ Professional menu-driven interface combining all modules in one tool.
 
 - DNS brute force with built-in wordlist
 - Zone transfer testing
+- Certificate Transparency logs
 - Concurrent DNS lookups
-- A/CNAME record discovery
 
 **4. Web Crawler**
 
@@ -53,14 +53,12 @@ Professional menu-driven interface combining all modules in one tool.
 - Email extraction
 - Robots.txt parsing
 - Sitemap detection
-- External link enumeration
 
 **5. Username Enumeration (OSINT)**
 
 - Check username across 50+ platforms
 - Social media presence mapping
 - Developer platform checks
-- Gaming and creative platform detection
 - Automated profile discovery
 
 **6. Domain Intelligence (OSINT)**
@@ -69,7 +67,14 @@ Professional menu-driven interface combining all modules in one tool.
 - DNS record enumeration
 - IP geolocation
 - Web technology detection
-- Contact information extraction
+
+**7. DDoS Attack Simulator**
+
+- HTTP Flood attack simulation
+- Slowloris connection exhaustion
+- Combined multi-method attacks
+- Real-time performance monitoring
+- **AUTHORIZED INFRASTRUCTURE TESTING ONLY**
 
 ## Installation
 
@@ -86,10 +91,11 @@ chmod +x setup.sh
 
 ### Manual Installation
 
-````bash
+```bash
 # Install dependencies
 pip3 install -r requirements.txt
-````
+```
+
 - Socket programming
 - Multi-threading concepts
 - DNS enumeration techniques
@@ -110,7 +116,7 @@ Results can be saved in JSON format for further analysis:
     "web_crawl": {...}
   }
 }
-````
+```
 
 ## Requirements
 

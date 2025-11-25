@@ -6,6 +6,7 @@ from .subdomain_enum import enumerate_subdomains
 from .web_crawler import crawl_website
 from .username_enum import check_username
 from .domain_intel import domain_intelligence
+from .stress_tester import stress_test
 
 __all__ = [
     'scan_target',
@@ -15,5 +16,6 @@ __all__ = [
     'enumerate_subdomains',
     'crawl_website',
     'check_username',
-    'domain_intelligence'
+    'domain_intelligence',
+    'stress_test'
 ]
