@@ -75,28 +75,30 @@ def print_banner():
 def print_menu():
     """Display main menu"""
     print(f"\n{Colors.PURPLE}{'═'*68}{Colors.ENDC}")
-    print(f"{Colors.BOLD}{Colors.PURPLE}                      {Colors.CYAN}◈  OPERATION MENU  ◈{Colors.ENDC}")
+    print(f"{Colors.BOLD}{Colors.PURPLE}                   {Colors.CYAN}◈  OPERATION MENU  ◈{Colors.ENDC}")
     print(f"{Colors.PURPLE}{'═'*68}{Colors.ENDC}\n")
     
+    # Compact table layout
+    print(f"{Colors.CYAN}┌────┬──────────────────────────┬──────────────────────────────┐{Colors.ENDC}")
+    print(f"{Colors.CYAN}│ ID │ MODULE                   │ DESCRIPTION                  │{Colors.ENDC}")
+    print(f"{Colors.CYAN}├────┼──────────────────────────┼──────────────────────────────┤{Colors.ENDC}")
+    
     menu_items = [
-        ("PORT SCANNER", "Scan target for open ports", Colors.CYAN),
-        ("SERVICE FINGERPRINT", "Identify services and versions", Colors.CYAN),
-        ("SUBDOMAIN ENUMERATION", "Discover subdomains", Colors.CYAN),
-        ("WEB CRAWLER", "Spider websites for intelligence", Colors.CYAN),
-        ("USERNAME ENUMERATION", "Check username across platforms (OSINT)", Colors.PURPLE),
-        ("DOMAIN INTELLIGENCE", "WHOIS and domain reconnaissance (OSINT)", Colors.PURPLE),
-        ("FULL RECONNAISSANCE", "Run all modules sequentially", Colors.NEON),
-        ("SETTINGS", "Configure scan parameters", Colors.GRAY),
-        ("EXIT", "Exit the program", Colors.RED),
+        ("1", "PORT SCANNER", "Scan for open ports", Colors.CYAN),
+        ("2", "SERVICE FINGERPRINT", "Identify services", Colors.CYAN),
+        ("3", "SUBDOMAIN ENUMERATION", "Discover subdomains", Colors.CYAN),
+        ("4", "WEB CRAWLER", "Spider websites", Colors.CYAN),
+        ("5", "USERNAME ENUMERATION", "OSINT: Check usernames", Colors.PURPLE),
+        ("6", "DOMAIN INTELLIGENCE", "OSINT: WHOIS & DNS", Colors.PURPLE),
+        ("7", "FULL RECONNAISSANCE", "Run all modules", Colors.NEON),
+        ("8", "SETTINGS", "Configure parameters", Colors.GRAY),
+        ("9", "EXIT", "Exit program", Colors.RED),
     ]
     
-    for idx, (name, desc, color) in enumerate(menu_items, 1):
-        status = f"{Colors.NEON}[◉ ACTIVE]{Colors.ENDC}"
-        print(f"{Colors.GRAY}{idx:02d}.{Colors.ENDC} {color}{name:<30}{Colors.ENDC} {status}")
-        print(f"    {Colors.GRAY}└─{Colors.ENDC} {Colors.WHITE}{desc}{Colors.ENDC}")
-        if idx < len(menu_items):
-            print()
+    for idx, name, desc, color in menu_items:
+        print(f"{Colors.CYAN}│{Colors.ENDC} {color}{idx:2s}{Colors.ENDC} {Colors.CYAN}│{Colors.ENDC} {color}{name:24s}{Colors.ENDC} {Colors.CYAN}│{Colors.ENDC} {Colors.WHITE}{desc:28s}{Colors.ENDC} {Colors.CYAN}│{Colors.ENDC}")
     
+    print(f"{Colors.CYAN}└────┴──────────────────────────┴──────────────────────────────┘{Colors.ENDC}")
     print(f"\n{Colors.PURPLE}{'═'*68}{Colors.ENDC}")
 
 
