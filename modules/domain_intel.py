@@ -31,36 +31,77 @@ class DomainIntel:
         Returns:
             WHOIS information
         """
-        def safe_extract(value):
-            """Safely extract value from whois data"""
-            if value is None:
+        def safe_extract(obj, attr):
+            """Safely extract attribute from whois object"""
+            try:
+                value = getattr(obj, attr, None)
+                if value is None:
+                    return None
+                # Handle lists
+                if isinstance(value, list):
+                    if len(value) > 0:
+                        return str(value[0])
+                    return None
+                # Convert to string
+                return str(value)
+            except:
                 return None
-            # Handle lists (whois sometimes returns lists)
-            if isinstance(value, list):
-                if len(value) > 0:
-                    return str(value[0])
-                return None
-            # Convert to string
-            return str(value)
         
         try:
             import whois
             
             w = whois.whois(self.domain)
             
-            # Extract relevant info with safe extraction
-            info = {
-                'domain': self.domain,
-                'registrar': safe_extract(getattr(w, 'registrar', None)),
-                'creation_date': safe_extract(getattr(w, 'creation_date', None)),
-                'expiration_date': safe_extract(getattr(w, 'expiration_date', None)),
-                'updated_date': safe_extract(getattr(w, 'updated_date', None)),
-                'name_servers': getattr(w, 'name_servers', []) or [],
-                'status': safe_extract(getattr(w, 'status', None)),
-                'emails': getattr(w, 'emails', []) or [],
-                'org': safe_extract(getattr(w, 'org', None)),
-                'country': safe_extract(getattr(w, 'country', None)),
-            }
+            # Extract relevant info with defensive extraction
+            info = {'domain': self.domain}
+            
+            # Extract each field individually with error handling
+            try:
+                info['registrar'] = safe_extract(w, 'registrar')
+            except:
+                info['registrar'] = None
+            
+            try:
+                info['creation_date'] = safe_extract(w, 'creation_date')
+            except:
+                info['creation_date'] = None
+            
+            try:
+                info['expiration_date'] = safe_extract(w, 'expiration_date')
+            except:
+                info['expiration_date'] = None
+            
+            try:
+                info['updated_date'] = safe_extract(w, 'updated_date')
+            except:
+                info['updated_date'] = None
+            
+            try:
+                ns = getattr(w, 'name_servers', None)
+                info['name_servers'] = ns if isinstance(ns, list) else []
+            except:
+                info['name_servers'] = []
+            
+            try:
+                info['status'] = safe_extract(w, 'status')
+            except:
+                info['status'] = None
+            
+            try:
+                emails = getattr(w, 'emails', None)
+                info['emails'] = emails if isinstance(emails, list) else []
+            except:
+                info['emails'] = []
+            
+            try:
+                info['org'] = safe_extract(w, 'org')
+            except:
+                info['org'] = None
+            
+            try:
+                info['country'] = safe_extract(w, 'country')
+            except:
+                info['country'] = None
             
             return info
             
