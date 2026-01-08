@@ -1,12 +1,12 @@
 # PHANTOM
 
-### Invisible Network Reconnaissance Framework
+### Random shi I made
 
-A professional cybersecurity toolkit for stealth reconnaissance and authorized penetration testing operations.
+Just a multi-tools for pentesting.
 
 ## Legal Notice
 
-**CRITICAL: This tool is for educational and authorized testing purposes only.**
+**This tool is for educational and authorized testing purposes only.**
 
 Only use on:
 
@@ -78,7 +78,7 @@ Professional menu-driven interface combining all modules in one tool.
 
 ## Installation
 
-### On ParrotOS or Kali Linux
+### Kali Linux (or Ubuntu based)
 
 ```bash
 # Navigate to project directory
@@ -95,11 +95,6 @@ chmod +x setup.sh
 # Install dependencies
 pip3 install -r requirements.txt
 ```
-
-- Socket programming
-- Multi-threading concepts
-- DNS enumeration techniques
-- Web reconnaissance methods
 
 ## Output
 
@@ -121,7 +116,7 @@ Results can be saved in JSON format for further analysis:
 ## Requirements
 
 - Python 3.7+
-- Linux environment (ParrotOS, Kali, Ubuntu)
+- Linux environment (ParrotOS, Kali, Ubuntu etc)
 - Network connectivity
 - Proper authorization for target systems
 
@@ -180,8 +175,5 @@ Educational and authorized testing purposes only.
 ## Author
 
 **Katyusha47**  
-Version 1.0.0
 
 ---
-
-**Remember: With great power comes great responsibility. Only test systems you have permission to scan.**
