@@ -8,7 +8,7 @@ requests
 beautifulsoup4
 
 # WHOIS lookup (domain intelligence)
-python-whois>
+python-whois
 
 # Standard library modules used:
 # - socket (TCP/IP networking)
